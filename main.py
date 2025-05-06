@@ -71,7 +71,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     # choose position with highest flood fill distance
     floodfill_distances = {}
-    for move in safe_moves.keys():
+    for move in moves:
         next_head_pos = (
             my_head["x"] + moves[move][0],
             my_head["y"] + moves[move][1]
