@@ -77,7 +77,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
             my_head["y"] + moves[move][1]
         )
         if next_head_pos in free_fields:
-            floodfill_distances[move] = floodfill.flood_fill_max_area(game_state, next_head_pos)
+            floodfill_distances[move] = floodfill.flood_fill_max_area(game_state, next_head_pos, move)
             print(f"Flood fill distance for {move}: {floodfill_distances[move]}")
 
     
