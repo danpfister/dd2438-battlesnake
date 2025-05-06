@@ -16,7 +16,7 @@ import utils
 import food
 import floodfill
 
-FOOD_WEIGHT = 0.9
+FOOD_WEIGHT = 0.7
 
 # info is called when you create your Battlesnake on play.battlesnake.com
 # and controls your Battlesnake's appearance
@@ -78,9 +78,9 @@ def move(game_state: typing.Dict) -> typing.Dict:
     scores = {}
     for move in safe_moves:
         if game_state["you"]["health"] < 25:
-            scores[move] = max(0, 20 - food_distances[move])
+            scores[move] = max(0, 20 - food_distances[move]**2)
         else:
-            scores[move] = FOOD_WEIGHT * max(0, 50 - food_distances[move]) + (1 - FOOD_WEIGHT) * floodfill_distances[move]
+            scores[move] = FOOD_WEIGHT * max(0, 20 - food_distances[move]**2) + (1 - FOOD_WEIGHT) * floodfill_distances[move]
         
     next_move = max(scores, key=scores.get)
     #print(f"max_distance: {floodfill_distances[next_move]}")
