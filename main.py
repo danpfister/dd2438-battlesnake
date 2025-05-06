@@ -16,6 +16,7 @@ import utils
 import food
 import floodfill
 
+FOOD_WEIGHT = 0.8
 
 # info is called when you create your Battlesnake on play.battlesnake.com
 # and controls your Battlesnake's appearance
@@ -52,38 +53,36 @@ def move(game_state: typing.Dict) -> typing.Dict:
     
     free_fields = utils.get_free_fields(game_state)
 
-    safe_moves = {}
+    # choose food with lowest food distance
+    # next_move = min(safe_moves, key=safe_moves.get)
+
+    # choose position with highest flood fill distance
+    safe_moves = []
+    floodfill_distances = {}
+    food_distances = {}
     for move in moves.keys():
         next_head_pos = (
             my_head["x"] + moves[move][0],
             my_head["y"] + moves[move][1]
         )
         if next_head_pos in free_fields:
-            # add food distance TODO replace this with weighted average
-            safe_moves[move] = food.get_food_distance(game_state, next_head_pos)
-
+            safe_moves.append(move)
+            floodfill_distances[move] = floodfill.flood_fill_max_area(game_state, next_head_pos, move)
+            food_distances[move] = food.get_food_distance(game_state, next_head_pos)
+            #print(f"Flood fill distance for {move}: {floodfill_distances[move]}")
+    
     if len(safe_moves) == 0:
         print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
         return {"move": "down"}
 
-    # choose food with lowest food distance
-    # next_move = min(safe_moves, key=safe_moves.get)
+    scores = {}
+    for move in safe_moves:
+        scores[move] = FOOD_WEIGHT * max(0, 20 - food_distances[move]) + (1 - FOOD_WEIGHT) * floodfill_distances[move]
+        
+    next_move = max(scores, key=scores.get)
+    #print(f"max_distance: {floodfill_distances[next_move]}")
 
-    # choose position with highest flood fill distance
-    floodfill_distances = {}
-    for move in moves:
-        next_head_pos = (
-            my_head["x"] + moves[move][0],
-            my_head["y"] + moves[move][1]
-        )
-        if next_head_pos in free_fields:
-            floodfill_distances[move] = floodfill.flood_fill_max_area(game_state, next_head_pos, move)
-            print(f"Flood fill distance for {move}: {floodfill_distances[move]}")
-
-    
-    next_move = max(floodfill_distances, key=floodfill_distances.get)
-    print(f"max_distance: {floodfill_distances[next_move]}")
-
+    print(f"scores: {scores}")
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
 
