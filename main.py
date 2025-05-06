@@ -14,6 +14,7 @@ import random
 import typing
 import utils
 import food
+import floodfill
 
 
 # info is called when you create your Battlesnake on play.battlesnake.com
@@ -66,7 +67,22 @@ def move(game_state: typing.Dict) -> typing.Dict:
         return {"move": "down"}
 
     # choose food with lowest food distance
-    next_move = min(safe_moves, key=safe_moves.get)
+    # next_move = min(safe_moves, key=safe_moves.get)
+
+    # choose position with highest flood fill distance
+    floodfill_distances = {}
+    for move in safe_moves.keys():
+        next_head_pos = (
+            my_head["x"] + moves[move][0],
+            my_head["y"] + moves[move][1]
+        )
+        if next_head_pos in free_fields:
+            floodfill_distances[move] = floodfill.flood_fill_max_area(game_state, next_head_pos)
+            print(f"Flood fill distance for {move}: {floodfill_distances[move]}")
+
+    
+    next_move = max(floodfill_distances, key=floodfill_distances.get)
+    print(f"max_distance: {floodfill_distances[next_move]}")
 
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
