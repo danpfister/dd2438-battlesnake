@@ -12,7 +12,9 @@
 
 import random
 import typing
-
+import utils
+import food
+import floodfill
 
 # info is called when you create your Battlesnake on play.battlesnake.com
 # and controls your Battlesnake's appearance
@@ -22,10 +24,10 @@ def info() -> typing.Dict:
 
     return {
         "apiversion": "1",
-        "author": "",  # TODO: Your Battlesnake Username
-        "color": "#888888",  # TODO: Choose color
-        "head": "default",  # TODO: Choose head
-        "tail": "default",  # TODO: Choose tail
+        "author": "danpfister",
+        "color": "#4806ba",
+        "head": "caffeine",
+        "tail": "do-sammy",
     }
 
 
@@ -43,51 +45,42 @@ def end(game_state: typing.Dict):
 # Valid moves are "up", "down", "left", or "right"
 # See https://docs.battlesnake.com/api/example-move for available data
 def move(game_state: typing.Dict) -> typing.Dict:
+    moves = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
 
-    is_move_safe = {"up": True, "down": True, "left": True, "right": True}
-
-    # We've included code to prevent your Battlesnake from moving backwards
     my_head = game_state["you"]["body"][0]  # Coordinates of your head
-    my_neck = game_state["you"]["body"][1]  # Coordinates of your "neck"
+    
+    free_fields = utils.get_free_fields(game_state)
 
-    if my_neck["x"] < my_head["x"]:  # Neck is left of head, don't move left
-        is_move_safe["left"] = False
+    # choose food with lowest food distance
+    # next_move = min(safe_moves, key=safe_moves.get)
 
-    elif my_neck["x"] > my_head["x"]:  # Neck is right of head, don't move right
-        is_move_safe["right"] = False
-
-    elif my_neck["y"] < my_head["y"]:  # Neck is below head, don't move down
-        is_move_safe["down"] = False
-
-    elif my_neck["y"] > my_head["y"]:  # Neck is above head, don't move up
-        is_move_safe["up"] = False
-
-    # TODO: Step 1 - Prevent your Battlesnake from moving out of bounds
-    # board_width = game_state['board']['width']
-    # board_height = game_state['board']['height']
-
-    # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
-    # my_body = game_state['you']['body']
-
-    # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
-    # opponents = game_state['board']['snakes']
-
-    # Are there any safe moves left?
+    # choose position with highest flood fill distance
     safe_moves = []
-    for move, isSafe in is_move_safe.items():
-        if isSafe:
+    floodfill_distances = {}
+    food_distances = {}
+    for move in moves.keys():
+        next_head_pos = (
+            my_head["x"] + moves[move][0],
+            my_head["y"] + moves[move][1]
+        )
+        if next_head_pos in free_fields:
             safe_moves.append(move)
-
+            floodfill_distances[move] = floodfill.flood_fill_max_area(game_state, next_head_pos, move)
+            food_distances[move] = food.get_food_distance(game_state, next_head_pos)
+            #print(f"Flood fill distance for {move}: {floodfill_distances[move]}")
+    
     if len(safe_moves) == 0:
         print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
         return {"move": "down"}
 
-    # Choose a random move from the safe ones
-    next_move = random.choice(safe_moves)
+    scores = utils.get_scores(game_state, food_distances, floodfill_distances)
+    
+    next_move = max(scores, key=scores.get)
+    #print(f"max_distance: {floodfill_distances[next_move]}")
 
-    # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
-    # food = game_state['board']['food']
-
+    print(f"ff distances: {floodfill_distances}")
+    print(f"food distances: {food_distances}")
+    print(f"scores: {scores}")
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
 
