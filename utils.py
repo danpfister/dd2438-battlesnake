@@ -1,6 +1,6 @@
 import typing
 
-FOOD_WEIGHT = 0.6
+FOOD_WEIGHT = 0.5
 
 def get_free_fields(game_state: dict):
     fields = set(
@@ -10,19 +10,26 @@ def get_free_fields(game_state: dict):
     )
     moves = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
     my_length = game_state["you"]["length"]
+    our_head_cell = (game_state["you"]["body"][0]["x"], game_state["you"]["body"][0]["y"])
     
-    for b in game_state["you"]["body"]:
+    for i, b in enumerate(game_state["you"]["body"]):
+        cell = (b["x"], b["y"])
+        # skip cells which won't be occupied by the time we reach them
+        if get_distance(cell, our_head_cell) >= my_length - i: continue
         fields.discard((b["x"], b["y"]))
         
     for snake in game_state["board"]["snakes"]:
         if snake["id"] == game_state["you"]["id"]: continue
         head = snake["body"][0]
+        snake_length = snake["length"]
         
-        if snake["length"] >= my_length: # for longer snakes discard cells where enemy head can move
+        if snake_length >= my_length: # for longer snakes discard cells where enemy head can move
             for move in moves.values():
                 fields.discard((head["x"] + move[0], head["y"] + move[1]))
                 
-        for b in snake["body"]:
+        for i, b in enumerate(snake["body"]):
+            cell = (b["x"], b["y"])
+            if get_distance(cell, our_head_cell) >= snake_length - i: continue
             fields.discard((b["x"], b["y"]))
             
     return fields
@@ -45,3 +52,10 @@ def get_scores(game_state: dict, food_distances: dict, floodfill_distances: dict
             scores[move] = FOOD_WEIGHT * food_distances[move] + (1 - FOOD_WEIGHT) * floodfill_distances[move]
     
     return scores
+
+def get_distance(a, b):
+    '''
+    get manhattan distance between two cells of the type: (x, y)
+    '''
+    distance = abs(a[0] - b[0]) + abs(a[1] - b[1])
+    return distance
