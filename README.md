@@ -1,3 +1,7 @@
+# DD2438 Battlesnake
+## Setup
+Use Python 3.7 and run `pip install -r requirements.txt`.
+
 # Battlesnake Python Starter Project
 
 An official Battlesnake template written in Python. Get started at [play.battlesnake.com](https://play.battlesnake.com).
