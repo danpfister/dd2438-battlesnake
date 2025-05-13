@@ -1,8 +1,8 @@
 import typing
 
-FOOD_WEIGHT = 0.5
+FOOD_WEIGHT = 0.7
 
-def get_free_fields(game_state: dict):
+def get_free_fields(game_state: dict, safe_mode=True):
     fields = set(
         (i, j)
         for i in range(game_state["board"]["width"])
@@ -23,7 +23,8 @@ def get_free_fields(game_state: dict):
         head = snake["body"][0]
         snake_length = snake["length"]
         
-        if snake_length >= my_length: # for longer snakes discard cells where enemy head can move
+        # in safe mode: for longer snakes discard cells where enemy head can move
+        if snake_length >= my_length and safe_mode:
             for move in moves.values():
                 fields.discard((head["x"] + move[0], head["y"] + move[1]))
                 
