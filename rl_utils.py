@@ -1,7 +1,9 @@
 import numpy as np
 
 def create_observation(game_state: dict):
-    obs =  np.zeros((11, 11, 6), dtype=np.uint8)
+    HEIGHT = game_state["board"]["height"]
+    WIDTH = game_state["board"]["width"]
+    obs =  np.zeros((HEIGHT, WIDTH, 6), dtype=np.uint8)
     
     # layer0: snake health on heads {0,...,100}
     # layer1: snake bodies {0,1}
@@ -29,4 +31,4 @@ def create_observation(game_state: dict):
     
     obs[:, :, 5] = 1 # layer 5
     
-    return obs.reshape((1, 11, 11, 6))
+    return obs.reshape((1, HEIGHT, WIDTH, 6))
