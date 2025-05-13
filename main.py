@@ -78,10 +78,14 @@ def move(game_state: typing.Dict) -> typing.Dict:
     next_move = max(scores, key=scores.get)
     #print(f"max_distance: {floodfill_distances[next_move]}")
 
-    print(f"ff distances: {floodfill_distances}")
-    print(f"food distances: {food_distances}")
-    print(f"scores: {scores}")
-    print(f"MOVE {game_state['turn']}: {next_move}")
+    print(f"{'Direction':<10} {'Floodfill':<10} {'Food':<10} {'Score':<10}")
+    print("-" * 45)
+    for direction in sorted(safe_moves):
+        ff = floodfill_distances.get(direction, 'N/A')
+        f = food_distances.get(direction, 'N/A')
+        score = scores.get(direction, 'N/A')
+        print(f"{direction:<10} {ff:<10} {f:<10} {score:<10.3f}")
+    print(f"\nMOVE {game_state['turn']}: {next_move}\n\n")
     return {"move": next_move}
 
 
