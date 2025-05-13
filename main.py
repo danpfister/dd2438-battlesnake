@@ -50,12 +50,14 @@ def move(game_state: typing.Dict) -> typing.Dict:
     my_head = game_state["you"]["body"][0]  # Coordinates of your head
     
     free_fields = utils.get_free_fields(game_state)
+    semi_free_fields = utils.get_free_fields(game_state, safe_mode=False)
 
     # choose food with lowest food distance
     # next_move = min(safe_moves, key=safe_moves.get)
 
     # choose position with highest flood fill distance
     safe_moves = []
+    semi_safe_moves = []
     floodfill_distances = {}
     food_distances = {}
     for move in moves.keys():
@@ -68,10 +70,18 @@ def move(game_state: typing.Dict) -> typing.Dict:
             floodfill_distances[move] = floodfill.flood_fill_max_area(game_state, next_head_pos, move)
             food_distances[move] = food.get_food_distance(game_state, next_head_pos)
             #print(f"Flood fill distance for {move}: {floodfill_distances[move]}")
+        elif next_head_pos in semi_free_fields:
+            semi_safe_moves.append(move)
     
     if len(safe_moves) == 0:
-        print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
-        return {"move": "down"}
+        print("didn't find any safe moves")
+        if len(semi_safe_moves) == 0:
+            print("didn't find any semi-safe moves")
+            return {"move": "down"}
+        else:
+            rand_move = random.choice(semi_safe_moves)
+            print(f"choosing random semi-safe move: {move}")
+            return {"move": rand_move}
 
     scores = utils.get_scores(game_state, food_distances, floodfill_distances)
     
