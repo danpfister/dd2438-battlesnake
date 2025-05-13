@@ -26,5 +26,5 @@ def get_food_distance(game_state: dict, start):
             if (nx, ny) in free_fields:
                 queue.append(((nx, ny), dist + 1))
     
-    return 1000; # no food found
+    return 20; # no food found
         

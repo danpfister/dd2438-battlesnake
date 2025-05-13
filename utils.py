@@ -41,7 +41,7 @@ def get_scores(game_state: dict, food_distances: dict, floodfill_distances: dict
     max_food_distance = max(max(food_distances.values()), 1)
     food_distances = {k: v / max_food_distance for k, v in food_distances.items()}
     
-    floodfill_distances = {k: (v - 5) for k, v in floodfill_distances.items()}
+    floodfill_distances = {k: max(0, v - 7) for k, v in floodfill_distances.items()}
     max_floodfill_distance = max(max(floodfill_distances.values()), 1)
     floodfill_distances = {k: v / max_floodfill_distance for k, v in floodfill_distances.items()}
     
