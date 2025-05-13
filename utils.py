@@ -37,14 +37,14 @@ def get_free_fields(game_state: dict, safe_mode=True):
     return fields
 
 def get_enemy_heads(game_state: dict):
-    my_id = game_state["you"]["id"]
+    my_name = game_state["you"]["name"]
     return [
         {
             "pos": (snake["head"]["x"], snake["head"]["y"]),
             "length": snake["length"],
         }
         for snake in game_state["board"]["snakes"]
-        if snake["id"] != my_id
+        if snake["name"] == my_name
     ]
 
 
