@@ -3,7 +3,8 @@ from stable_baselines import PPO2
 import gym_battlesnake
 import rl_utils
 
-model = PPO2.load("models/ppo2_trainedmodel_2")
+model = PPO2.load("models/ppo2_trainedmodel_multiagent")
+print("LOADED MODEL")
 
 def info() -> typing.Dict:
     print("INFO")
@@ -20,7 +21,6 @@ def info() -> typing.Dict:
 # start is called when your Battlesnake begins a game
 def start(game_state: typing.Dict):
     print("GAME START")
-    print("MODEL LOADED")
 
 
 # end is called when your Battlesnake finishes a game
