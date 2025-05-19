@@ -2,7 +2,7 @@ import floodfill
 import numpy as np
 from collections import deque
 
-FOOD_WEIGHT = 0.8
+FOOD_WEIGHT = 0.7
 
 def get_free_fields(game_state: dict, safe_mode=True):
     fields = set(
@@ -55,10 +55,10 @@ def get_scores(game_state: dict, food_distances: dict, floodfill_distances: dict
     # scale food distances
     food_distances_scaled = {k: max(0, 10 - v) for k, v in food_distances.items()}
     max_food_distance = max(max(food_distances_scaled.values()), 1)
-    food_distances_scaled = {k: v / max_food_distance for k, v in food_distances_scaled.items()}
+    food_distances_scaled = {k: (v / max_food_distance)**2 for k, v in food_distances_scaled.items()}
     
     # scale floodfill distances
-    floodfill_distances_scaled = {k: max(0, v - game_state['you']['length']) for k, v in floodfill_distances.items()}
+    floodfill_distances_scaled = {k: max(0, v) for k, v in floodfill_distances.items()}
     max_floodfill_distance = max(max(floodfill_distances_scaled.values()), 1)
     floodfill_distances_scaled = {k: v / max_floodfill_distance for k, v in floodfill_distances_scaled.items()}
     
@@ -79,7 +79,7 @@ def get_scores(game_state: dict, food_distances: dict, floodfill_distances: dict
         
         # penalty for tight areas where we won't fit
         if floodfill_distances[move] < my_length:
-            score -= 0.3
+            score -= 0.5
             
         score += FOOD_WEIGHT * food_score + (1 - FOOD_WEIGHT) * space_score
 
