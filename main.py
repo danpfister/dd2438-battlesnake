@@ -50,6 +50,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     WIDTH, HEIGHT = game_state["board"]['width'], game_state["board"]['height']
 
     my_head = game_state["you"]["body"][0]  # Coordinates of your head
+    my_length = game_state['you']['length']
     
     free_fields = utils.get_free_fields(game_state)
     semi_free_fields = utils.get_free_fields(game_state, safe_mode=False)
@@ -84,14 +85,15 @@ def move(game_state: typing.Dict) -> typing.Dict:
     
     voronoi_map, snake_id_map = utils.get_voronoi_numpy(game_state)
     
-    # if (game_state["turn"] == 5):
-    #     print(np.flipud(voronoi_map.T))
+    if (game_state["turn"] == 100):
+        print(np.flipud(voronoi_map.T))
 
     scores = utils.get_scores(game_state, food_distances, floodfill_distances, voronoi_map, snake_id_map[game_state["you"]["id"]])
     
     next_move = max(scores, key=scores.get)
-    #print(f"max_distance: {floodfill_distances[next_move]}")
 
+    print(f"MOVE {game_state['turn']}")
+    print(f"length: {my_length}")
     print(f"{'Direction':<10} {'Floodfill':<10} {'Food':<10} {'Score':<10}")
     print("-" * 45)
     for direction in sorted(safe_moves):
@@ -99,7 +101,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
         f = food_distances.get(direction, 'N/A')
         score = scores.get(direction, 'N/A')
         print(f"{direction:<10} {ff:<10} {f:<10} {score:<10.3f}")
-    print(f"\nMOVE {game_state['turn']}: {next_move}\n\n")
+    print(f"--> {next_move}\n\n")
     return {"move": next_move}
 
 
