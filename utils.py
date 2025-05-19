@@ -2,7 +2,7 @@ import floodfill
 import numpy as np
 from collections import deque
 
-FOOD_WEIGHT = 0.7
+FOOD_WEIGHT = 0.8
 
 def get_free_fields(game_state: dict, safe_mode=True):
     fields = set(
@@ -53,14 +53,14 @@ def get_scores(game_state: dict, food_distances: dict, floodfill_distances: dict
     move_to_delta = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
     
     # scale food distances
-    food_distances = {k: max(0, 10 - v) for k, v in food_distances.items()}
-    max_food_distance = max(max(food_distances.values()), 1)
-    food_distances = {k: v / max_food_distance for k, v in food_distances.items()}
+    food_distances_scaled = {k: max(0, 10 - v) for k, v in food_distances.items()}
+    max_food_distance = max(max(food_distances_scaled.values()), 1)
+    food_distances_scaled = {k: v / max_food_distance for k, v in food_distances_scaled.items()}
     
     # scale floodfill distances
-    floodfill_distances = {k: max(0, v - 7) for k, v in floodfill_distances.items()}
-    max_floodfill_distance = max(max(floodfill_distances.values()), 1)
-    floodfill_distances = {k: v / max_floodfill_distance for k, v in floodfill_distances.items()}
+    floodfill_distances_scaled = {k: max(0, v - game_state['you']['length']) for k, v in floodfill_distances.items()}
+    max_floodfill_distance = max(max(floodfill_distances_scaled.values()), 1)
+    floodfill_distances_scaled = {k: v / max_floodfill_distance for k, v in floodfill_distances_scaled.items()}
     
     my_head = (game_state["you"]["body"][0]["x"], game_state["you"]["body"][0]["y"])
     my_length = game_state["you"]["length"]
@@ -68,14 +68,20 @@ def get_scores(game_state: dict, food_distances: dict, floodfill_distances: dict
     
     scores = {}
     for move in food_distances.keys():
-        food_score = food_distances[move]
-        space_score = floodfill_distances[move]
+        food_score = food_distances_scaled[move]
+        space_score = floodfill_distances_scaled[move]
+        score = 0
 
         # prevents snake from dying of hunger
         if game_state["you"]["health"] < 25:
             score = food_score
-            break
-        score = FOOD_WEIGHT * food_score + (1 - FOOD_WEIGHT) * space_score
+            continue
+        
+        # penalty for tight areas where we won't fit
+        if floodfill_distances[move] < my_length:
+            score -= 0.3
+            
+        score += FOOD_WEIGHT * food_score + (1 - FOOD_WEIGHT) * space_score
 
         ### ATTACKING BONUS ###
         dx, dy = move_to_delta[move]
