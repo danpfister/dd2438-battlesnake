@@ -15,6 +15,7 @@ import typing
 import utils
 import food
 import floodfill
+import numpy as np
 
 # info is called when you create your Battlesnake on play.battlesnake.com
 # and controls your Battlesnake's appearance
@@ -81,10 +82,12 @@ def move(game_state: typing.Dict) -> typing.Dict:
             print(f"choosing random semi-safe move: {move}")
             return {"move": rand_move}
     
-    if (game_state["turn"] == 5):
-        print(utils.get_voronoi_numpy(WIDTH, HEIGHT, game_state['board']['snakes']))
+    voronoi_map, snake_id_map = utils.get_voronoi_numpy(game_state)
+    
+    # if (game_state["turn"] == 5):
+    #     print(np.flipud(voronoi_map.T))
 
-    scores = utils.get_scores(game_state, food_distances, floodfill_distances)
+    scores = utils.get_scores(game_state, food_distances, floodfill_distances, voronoi_map, snake_id_map[game_state["you"]["id"]])
     
     next_move = max(scores, key=scores.get)
     #print(f"max_distance: {floodfill_distances[next_move]}")

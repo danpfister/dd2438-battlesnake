@@ -1,4 +1,3 @@
-import typing
 import floodfill
 import numpy as np
 from collections import deque
@@ -50,12 +49,15 @@ def get_enemy_heads(game_state: dict):
     ]
 
 
-def get_scores(game_state: dict, food_distances: dict, floodfill_distances: dict):
-    # scale values to [0-1]
+def get_scores(game_state: dict, food_distances: dict, floodfill_distances: dict, voronoi_map: np.ndarray, our_idx):
+    move_to_delta = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
+    
+    # scale food distances
     food_distances = {k: max(0, 10 - v) for k, v in food_distances.items()}
     max_food_distance = max(max(food_distances.values()), 1)
     food_distances = {k: v / max_food_distance for k, v in food_distances.items()}
     
+    # scale floodfill distances
     floodfill_distances = {k: max(0, v - 7) for k, v in floodfill_distances.items()}
     max_floodfill_distance = max(max(floodfill_distances.values()), 1)
     floodfill_distances = {k: v / max_floodfill_distance for k, v in floodfill_distances.items()}
@@ -63,18 +65,19 @@ def get_scores(game_state: dict, food_distances: dict, floodfill_distances: dict
     my_head = (game_state["you"]["body"][0]["x"], game_state["you"]["body"][0]["y"])
     my_length = game_state["you"]["length"]
     enemy_heads = get_enemy_heads(game_state)
-    move_to_delta = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
     
     scores = {}
     for move in food_distances.keys():
         food_score = food_distances[move]
         space_score = floodfill_distances[move]
 
-        if game_state["you"]["health"] < 25: # prevents snake from dying of hunger
+        # prevents snake from dying of hunger
+        if game_state["you"]["health"] < 25:
             score = food_score
+            break
         score = FOOD_WEIGHT * food_score + (1 - FOOD_WEIGHT) * space_score
 
-        # add offensive bonus
+        ### ATTACKING BONUS ###
         dx, dy = move_to_delta[move]
         new_pos = (my_head[0] + dx, my_head[1] + dy)
 
@@ -93,12 +96,13 @@ def get_scores(game_state: dict, food_distances: dict, floodfill_distances: dict
             if floodfill_distances[move] > (enemy_area / 10):  
                 score += 0.2
 
-
         scores[move] = score
     
     return scores
 
-def get_voronoi_numpy(width, height, snakes):
+def get_voronoi_numpy(game_state: dict):
+    width, height, snakes = game_state["board"]["width"], game_state["board"]["height"], game_state["board"]["snakes"]
+    
     # Constants
     UNCLAIMED = -1
     CONTESTED = -2
@@ -117,14 +121,13 @@ def get_voronoi_numpy(width, height, snakes):
     # Mark blocked cells and queue snake heads
     for snake in snakes:
         idx = snake_id_map[snake['id']]
-        for segment in snake['body']:
+        for segment in snake['body'][1:]:
             x, y = segment['x'], segment['y']
             blocked[x, y] = True
         head_x, head_y = snake['head']['x'], snake['head']['y']
-        if not blocked[head_x, head_y]:
-            queue.append((head_x, head_y, idx, 0))
-            owner_map[head_x, head_y] = idx
-            distance_map[head_x, head_y] = 0
+        queue.append((head_x, head_y, idx, 0))
+        owner_map[head_x, head_y] = idx
+        distance_map[head_x, head_y] = 0
 
     # BFS directions
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
@@ -136,6 +139,7 @@ def get_voronoi_numpy(width, height, snakes):
             nx, ny = x + dx, y + dy
             if not (0 <= nx < width and 0 <= ny < height):
                 continue
+            
             if blocked[nx, ny]:
                 continue
 
@@ -145,6 +149,8 @@ def get_voronoi_numpy(width, height, snakes):
                 queue.append((nx, ny, idx, dist + 1))
             elif distance_map[nx, ny] == dist + 1 and owner_map[nx, ny] != idx:
                 owner_map[nx, ny] = CONTESTED
+    
+    return owner_map, snake_id_map
 
 def get_distance(a, b):
     '''
