@@ -1,90 +1,222 @@
 {
-    "game": {
-      "id": "totally-unique-game-id",
-      "ruleset": {
-        "name": "standard",
-        "version": "v1.1.15",
-        "settings": {
-          "foodSpawnChance": 15,
-          "minimumFood": 1,
-          "hazardDamagePerTurn": 14
+  "game": {
+    "id": "580e65cc-0a16-4fd0-97f0-4f8ba235d5c4",
+    "ruleset": {
+      "name": "standard",
+      "version": "v1.2.3",
+      "settings": {
+        "foodSpawnChance": 15,
+        "minimumFood": 1,
+        "hazardDamagePerTurn": 0,
+        "hazardMap": "",
+        "hazardMapAuthor": "",
+        "royale": {
+          "shrinkEveryNTurns": 0
+        },
+        "squad": {
+          "allowBodyCollisions": false,
+          "sharedElimination": false,
+          "sharedHealth": false,
+          "sharedLength": false
+        }
+      }
+    },
+    "map": "standard",
+    "timeout": 500,
+    "source": "custom"
+  },
+  "turn": 5,
+  "board": {
+    "height": 11,
+    "width": 11,
+    "snakes": [
+      {
+        "id": "gs_FjRQhRyqhDMJJBHCCwKB8V3S",
+        "name": "MAS202511",
+        "latency": "25",
+        "health": 99,
+        "body": [
+          {
+            "x": 5,
+            "y": 6
+          },
+          {
+            "x": 5,
+            "y": 5
+          },
+          {
+            "x": 5,
+            "y": 4
+          },
+          {
+            "x": 5,
+            "y": 3
+          }
+        ],
+        "head": {
+          "x": 5,
+          "y": 6
+        },
+        "length": 4,
+        "shout": "",
+        "squad": "",
+        "customizations": {
+          "color": "#4494ff",
+          "head": "all-seeing",
+          "tail": "fat-rattle"
         }
       },
-      "map": "standard",
-      "source": "league",
-      "timeout": 500
-    },
-    "turn": 14,
-    "board": {
-      "height": 11,
-      "width": 11,
-      "food": [
-        {"x": 5, "y": 5},
-        {"x": 9, "y": 0},
-        {"x": 2, "y": 6}
-      ],
-      "hazards": [
-        {"x": 3, "y": 2}
-      ],
-      "snakes": [
-        {
-          "id": "snake-508e96ac-94ad-11ea-bb37",
-          "name": "My Snake",
-          "health": 54,
-          "body": [
-            {"x": 0, "y": 0},
-            {"x": 1, "y": 0},
-            {"x": 2, "y": 0}
-          ],
-          "latency": "111",
-          "head": {"x": 0, "y": 0},
-          "length": 3,
-          "shout": "why are we shouting??",
-          "customizations":{
-            "color":"#FF0000",
-            "head":"pixel",
-            "tail":"pixel"
+      {
+        "id": "gs_q78gcwrBRQDDmRgh3GqgWpP4",
+        "name": "MAS2025-6",
+        "latency": "71",
+        "health": 95,
+        "body": [
+          {
+            "x": 2,
+            "y": 5
+          },
+          {
+            "x": 3,
+            "y": 5
+          },
+          {
+            "x": 3,
+            "y": 4
           }
+        ],
+        "head": {
+          "x": 2,
+          "y": 5
         },
-        {
-          "id": "snake-b67f4906-94ae-11ea-bb37",
-          "name": "Another Snake",
-          "health": 16,
-          "body": [
-            {"x": 5, "y": 4},
-            {"x": 5, "y": 3},
-            {"x": 6, "y": 3},
-            {"x": 6, "y": 2}
-          ],
-          "latency": "222",
-          "head": {"x": 5, "y": 4},
-          "length": 4,
-          "shout": "I'm not really sure...",
-          "customizations":{
-            "color":"#26CF04",
-            "head":"silly",
-            "tail":"curled"
-          }
+        "length": 3,
+        "shout": "",
+        "squad": "",
+        "customizations": {
+          "color": "#ffb300",
+          "head": "caffeine",
+          "tail": "do-sammy"
         }
-      ]
-    },
-    "you": {
-      "id": "snake-508e96ac-94ad-11ea-bb37",
-      "name": "My Snake",
-      "health": 54,
-      "body": [
-        {"x": 0, "y": 0},
-        {"x": 1, "y": 0},
-        {"x": 2, "y": 0}
-      ],
-      "latency": "111",
-      "head": {"x": 0, "y": 0},
-      "length": 3,
-      "shout": "why are we shouting??",
-      "customizations": {
-        "color":"#FF0000",
-        "head":"pixel",
-        "tail":"pixel"
+      },
+      {
+        "id": "gs_JrxC7MFbTJHPdJccJJmC3HXd",
+        "name": "MAS2025-6",
+        "latency": "70",
+        "health": 100,
+        "body": [
+          {
+            "x": 7,
+            "y": 6
+          },
+          {
+            "x": 7,
+            "y": 5
+          },
+          {
+            "x": 7,
+            "y": 4
+          },
+          {
+            "x": 7,
+            "y": 4
+          }
+        ],
+        "head": {
+          "x": 7,
+          "y": 6
+        },
+        "length": 4,
+        "shout": "",
+        "squad": "",
+        "customizations": {
+          "color": "#ffb300",
+          "head": "caffeine",
+          "tail": "do-sammy"
+        }
+      },
+      {
+        "id": "gs_FTt6HdMKDWgjXtv4kx8dfp69",
+        "name": "MAS202511",
+        "latency": "25",
+        "health": 97,
+        "body": [
+          {
+            "x": 5,
+            "y": 8
+          },
+          {
+            "x": 6,
+            "y": 8
+          },
+          {
+            "x": 6,
+            "y": 9
+          },
+          {
+            "x": 6,
+            "y": 10
+          }
+        ],
+        "head": {
+          "x": 5,
+          "y": 8
+        },
+        "length": 4,
+        "shout": "",
+        "squad": "",
+        "customizations": {
+          "color": "#4494ff",
+          "head": "all-seeing",
+          "tail": "fat-rattle"
+        }
       }
+    ],
+    "food": [
+      {
+        "x": 6,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 10,
+        "y": 4
+      }
+    ],
+    "hazards": []
+  },
+  "you": {
+    "id": "gs_q78gcwrBRQDDmRgh3GqgWpP4",
+    "name": "MAS2025-6",
+    "latency": "71",
+    "health": 95,
+    "body": [
+      {
+        "x": 2,
+        "y": 5
+      },
+      {
+        "x": 3,
+        "y": 5
+      },
+      {
+        "x": 3,
+        "y": 4
+      }
+    ],
+    "head": {
+      "x": 2,
+      "y": 5
+    },
+    "length": 3,
+    "shout": "",
+    "squad": "",
+    "customizations": {
+      "color": "#ffb300",
+      "head": "caffeine",
+      "tail": "do-sammy"
     }
   }
+}
