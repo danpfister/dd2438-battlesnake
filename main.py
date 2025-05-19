@@ -46,16 +46,13 @@ def end(game_state: typing.Dict):
 # See https://docs.battlesnake.com/api/example-move for available data
 def move(game_state: typing.Dict) -> typing.Dict:
     moves = {"up": (0, 1), "down": (0, -1), "left": (-1, 0), "right": (1, 0)}
+    WIDTH, HEIGHT = game_state["board"]['width'], game_state["board"]['height']
 
     my_head = game_state["you"]["body"][0]  # Coordinates of your head
     
     free_fields = utils.get_free_fields(game_state)
     semi_free_fields = utils.get_free_fields(game_state, safe_mode=False)
 
-    # choose food with lowest food distance
-    # next_move = min(safe_moves, key=safe_moves.get)
-
-    # choose position with highest flood fill distance
     safe_moves = []
     semi_safe_moves = []
     floodfill_distances = {}
@@ -73,6 +70,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
         elif next_head_pos in semi_free_fields:
             semi_safe_moves.append(move)
     
+    ### UNSAFE MODE ###
     if len(safe_moves) == 0:
         print("didn't find any safe moves")
         if len(semi_safe_moves) == 0:
@@ -82,6 +80,9 @@ def move(game_state: typing.Dict) -> typing.Dict:
             rand_move = random.choice(semi_safe_moves)
             print(f"choosing random semi-safe move: {move}")
             return {"move": rand_move}
+    
+    if (game_state["turn"] == 5):
+        print(utils.get_voronoi_numpy(WIDTH, HEIGHT, game_state['board']['snakes']))
 
     scores = utils.get_scores(game_state, food_distances, floodfill_distances)
     

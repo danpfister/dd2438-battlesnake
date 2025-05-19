@@ -1,5 +1,7 @@
 import typing
 import floodfill
+import numpy as np
+from collections import deque
 
 FOOD_WEIGHT = 0.7
 
@@ -95,6 +97,54 @@ def get_scores(game_state: dict, food_distances: dict, floodfill_distances: dict
         scores[move] = score
     
     return scores
+
+def get_voronoi_numpy(width, height, snakes):
+    # Constants
+    UNCLAIMED = -1
+    CONTESTED = -2
+
+    # Initialize arrays
+    owner_map = np.full((width, height), UNCLAIMED, dtype=np.int32)
+    distance_map = np.full((width, height), np.inf, dtype=np.float32)
+    blocked = np.zeros((width, height), dtype=bool)
+
+    # Map snake IDs to indices
+    snake_id_map = {snake['id']: idx for idx, snake in enumerate(snakes)}
+    reverse_id_map = {v: k for k, v in snake_id_map.items()}
+
+    queue = deque()
+
+    # Mark blocked cells and queue snake heads
+    for snake in snakes:
+        idx = snake_id_map[snake['id']]
+        for segment in snake['body']:
+            x, y = segment['x'], segment['y']
+            blocked[x, y] = True
+        head_x, head_y = snake['head']['x'], snake['head']['y']
+        if not blocked[head_x, head_y]:
+            queue.append((head_x, head_y, idx, 0))
+            owner_map[head_x, head_y] = idx
+            distance_map[head_x, head_y] = 0
+
+    # BFS directions
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    while queue:
+        x, y, idx, dist = queue.popleft()
+
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if not (0 <= nx < width and 0 <= ny < height):
+                continue
+            if blocked[nx, ny]:
+                continue
+
+            if distance_map[nx, ny] > dist + 1:
+                distance_map[nx, ny] = dist + 1
+                owner_map[nx, ny] = idx
+                queue.append((nx, ny, idx, dist + 1))
+            elif distance_map[nx, ny] == dist + 1 and owner_map[nx, ny] != idx:
+                owner_map[nx, ny] = CONTESTED
 
 def get_distance(a, b):
     '''
